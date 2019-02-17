@@ -1,12 +1,8 @@
-# CS230 Code Examples
-
-[Tutorials](https://cs230-stanford.github.io)
-
-
-We are happy to introduce some code examples that you can use for your CS230 projects. The code contains examples for TensorFlow and PyTorch, in vision and NLP. The structure of the repository is the following:
+# Food identification with NVIDIAns
 
 ```
 README.md
+## default CS230 tutorials
 pytorch/
     vision/
         README.md
@@ -17,6 +13,6 @@ tensorflow/
         README.md
     nlp/
         README.md
-```
 
-You'll find a README.md in each sub-directory.
+#bryce's faster R-CNN development
+```
