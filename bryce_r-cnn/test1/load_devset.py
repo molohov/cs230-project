@@ -18,7 +18,7 @@ from keras.utils.np_utils import to_categorical
 import json
 
 # Load dataset images and resize to square image
-def load_images(root, size=300):
+def load_images(root, class_to_index, size=300):
     all_imgs = []
     all_classes = []
     resize_count = 0
@@ -61,17 +61,17 @@ def load_devset(path_to_devset, path_to_dev_dict):
     #print(sorted_class_to_index)
 
         
-    X_test, y_test = load_images(path_to_devset, size=300)
+    X_test, y_test = load_images(path_to_devset, class_to_index, size=300)
 
     # normalize. for some reason this takes an ENORMOUS amount of memory, hence commenting out for now
     #X_test = X_test / 255.
 
-    print('X_test shape', X_test.shape)
-    print('y_test shape', y_test.shape)
+    #print('X_test shape', X_test.shape)
+    #print('y_test shape', y_test.shape)
 
 
     n_classes = 101
     y_test_1hot = to_categorical(y_test, num_classes=n_classes)
 
-    print('y_test_1hot shape', y_test_1hot.shape)
+    #print('y_test_1hot shape', y_test_1hot.shape)
     return X_test, y_test_1hot, class_to_index, index_to_class
