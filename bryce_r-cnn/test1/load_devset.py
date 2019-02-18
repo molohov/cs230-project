@@ -25,7 +25,7 @@ def load_images(root, class_to_index, size=300):
     invalid_count = 0
     for i, subdir in enumerate(listdir(root)):
         imgs = listdir(join(root, subdir))
-        ## forcefully load just 5 images for now
+        ## FIXME forcefully load just 5 images for now to speed things up
         imgs = imgs[0:5]
         class_ix = class_to_index[subdir]
         print(i, class_ix, subdir)
