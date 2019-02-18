@@ -13,6 +13,16 @@ import pydot
 from IPython.display import SVG
 from keras.utils.vis_utils import model_to_dot
 from keras.utils import plot_model
+from keras.applications.inception_v3 import InceptionV3
+from keras.applications.inception_v3 import preprocess_input, decode_predictions
+from keras.models import Sequential, Model
+from keras.layers import Dense, Dropout, Activation, Flatten
+from keras.layers import Convolution2D, MaxPooling2D, ZeroPadding2D, GlobalAveragePooling2D, AveragePooling2D
+from keras.layers.normalization import BatchNormalization
+from keras.preprocessing.image import ImageDataGenerator
+from keras.callbacks import ModelCheckpoint, CSVLogger, LearningRateScheduler, ReduceLROnPlateau
+from keras.optimizers import SGD
+from keras.regularizers import l2
 
 import keras.backend as K
 K.set_image_data_format('channels_last')
@@ -24,26 +34,21 @@ from load_devset import *
 import math
 import h5py
 
-#def load_dataset():
-#    train_dataset = h5py.File('datasets/train_happy.h5', "r")
-#    train_set_x_orig = np.array(train_dataset["train_set_x"][:]) # your train set features
-#    train_set_y_orig = np.array(train_dataset["train_set_y"][:]) # your train set labels
-#
-#    test_dataset = h5py.File('datasets/test_happy.h5', "r")
-#    test_set_x_orig = np.array(test_dataset["test_set_x"][:]) # your test set features
-#    test_set_y_orig = np.array(test_dataset["test_set_y"][:]) # your test set labels
-#
-#    classes = np.array(test_dataset["list_classes"][:]) # the list of classes
-#    
-#    train_set_y_orig = train_set_y_orig.reshape((1, train_set_y_orig.shape[0]))
-#    test_set_y_orig = test_set_y_orig.reshape((1, test_set_y_orig.shape[0]))
-#    
-#    return train_set_x_orig, train_set_y_orig, test_set_x_orig, test_set_y_orig, classes
+## this code loads the dev set in manually and then converts it to h5
+#X_dev, Y_dev, classes_to_index, index_to_classes = load_devset("../../data/dev", "../../dev.dict")
+#with h5py.File('dev_data.h5', 'w') as file:
+#    file.create_dataset("data", data=X_dev)
+#    file.create_dataset("labels", data=Y_dev)
 
-#X_train_orig, Y_train_orig, X_test_orig, Y_test_orig, classes = load_dataset()
+## this loads the h5 database
+#dev_set = h5py.File('../../dev_data.h5')
+#
+#X_train = np.array(dev_set["data"])
+#Y_train = np.array(dev_set["labels"])
 
-## TODO: convert devset into h5 format and load it elegantly like above, to avoid wasting computation time
 X_train, Y_train, classes_to_index, index_to_classes = load_devset("../../data/dev", "../../dev.dict")
+num_classes = Y_train.shape[1]
+
 
 # Normalize image vectors. This will EXPLODE memory due to numpy inefficiencies
 #X_train = X_train_orig/255.
@@ -54,6 +59,7 @@ X_train, Y_train, classes_to_index, index_to_classes = load_devset("../../data/d
 #Y_test = Y_test_orig.T
 
 print ("number of training examples = " + str(X_train.shape[0]))
+print ("number of classes = " + str(num_classes))
 #print ("number of test examples = " + str(X_test.shape[0]))
 print ("X_train shape: " + str(X_train.shape))
 print ("Y_train shape: " + str(Y_train.shape))
@@ -92,14 +98,50 @@ def TestCNN(input_shape):
 
     # FLATTEN X (means convert it to a vector) + FULLYCONNECTED
     X = Flatten()(X)
-    X = Dense(101, activation='sigmoid', name='fc')(X)
+    X = Dense(num_classes, activation='sigmoid', name='fc')(X)
 
     # Create model. This creates your Keras model instance, you'll use this instance to train/test the model.
     model = Model(inputs = X_input, outputs = X, name='TestCNN')
     
     return model
 
+## load in inceptionv3 model
+K.clear_session()
 
+base_model = InceptionV3(weights='imagenet', include_top=False, input_tensor=Input(shape=(300, 300, 3)))
+x = base_model.output
+x = AveragePooling2D(pool_size=(8, 8))(x)
+x = Dropout(.4)(x)
+x = Flatten()(x)
+predictions = Dense(num_classes, init='glorot_uniform', W_regularizer=l2(.0005), activation='softmax')(x)
+
+model = Model(input=base_model.input, output=predictions)
+
+opt = SGD(lr=.01, momentum=.9)
+model.compile(optimizer=opt, loss='categorical_crossentropy', metrics=['accuracy'])
+
+model.fit(x=X_train, y=Y_train, epochs=1, batch_size=50)
+
+#checkpointer = ModelCheckpoint(filepath='model4.{epoch:02d}-{val_loss:.2f}.hdf5', verbose=1, save_best_only=True)
+#csv_logger = CSVLogger('model4.log')
+#
+#def schedule(epoch):
+#    if epoch < 15:
+#        return .01
+#    elif epoch < 28:
+#        return .002
+#    else:
+#        return .0004
+#lr_scheduler = LearningRateScheduler(schedule)
+#
+#model.fit_generator(train_generator,
+#                    validation_data=test_generator,
+#                    nb_val_samples=X_test.shape[0],
+#                    samples_per_epoch=X_train.shape[0],
+#                    nb_epoch=1,
+#                    verbose=2,
+#                    callbacks=[lr_scheduler, csv_logger, checkpointer])
+#
 # You have now built a function to describe your model. To train and test this model, there are four steps in Keras:
 # 1. Create the model by calling the function above
 # 2. Compile the model by calling `model.compile(optimizer = "...", loss = "...", metrics = ["accuracy"])`
@@ -107,18 +149,19 @@ def TestCNN(input_shape):
 # 4. Test the model on test data by calling `model.evaluate(x = ..., y = ...)`
 
 # 1. Create the model
-testCNN = TestCNN((300,300,3))
+#testCNN = TestCNN((300,300,3))
 
 # 2. Compile the model to configure the learning process.
-testCNN.compile(optimizer='Adam', loss='categorical_crossentropy', metrics=["accuracy"])
+#testCNN.compile(optimizer='Adam', loss='categorical_crossentropy', metrics=["accuracy"])
 
 # 3. Train the model. Choose the number of epochs and the batch size.
 #    Note that if you run `fit()` again, the `model` will continue to train with the parameters it has already learnt instead of reinitializing them.
-testCNN.fit(x=X_train, y=Y_train, epochs=1, batch_size=50)
+#testCNN.fit(x=X_train, y=Y_train, epochs=1, batch_size=50)
 
 # 4. Test/evaluate the model (for now evaluating on the training set lol)
 #preds = testCNN.evaluate(x = X_test, y = Y_test)
-preds = testCNN.evaluate(x = X_train, y = Y_train)
+#preds = testCNN.evaluate(x = X_train, y = Y_train)
+preds = model.evaluate(x = X_train, y = Y_train)
 
 print()
 print ("Loss = " + str(preds[0]))
