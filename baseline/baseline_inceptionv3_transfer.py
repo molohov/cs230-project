@@ -33,6 +33,8 @@ from load_devset import *
 import math
 import h5py
 
+import sys, getopt
+
 ## this code loads the dev set in manually and then converts it to h5
 #X_dev, Y_dev, classes_to_index, index_to_classes = load_devset("../../data/dev", "../../dev.dict")
 #with h5py.File('dev_data.h5', 'w') as file:
@@ -77,14 +79,14 @@ x = base_model.output
 #x = AveragePooling2D(pool_size=(3, 3))(x)
 x = Dropout(.4)(x)
 x = Flatten()(x)
-predictions = Dense(num_classes, init='glorot_uniform', W_regularizer=l2(.0005), activation='softmax')(x)
+predictions = Dense(num_classes, kernel_initializer='glorot_uniform', kernel_regularizer=l2(.0005), activation='softmax')(x)
 
 model = Model(inputs=base_model.input, outputs=predictions)
 
 opt = SGD(lr=.01, momentum=.9)
 model.compile(optimizer=opt, loss='categorical_crossentropy', metrics=['accuracy'])
 
-model.fit(x=X_train, y=Y_train, epochs=10, batch_size=32)
+model.fit(x=X_train, y=Y_train, epochs=1, batch_size=32)
 
 ## code from source that we may need later
 #checkpointer = ModelCheckpoint(filepath='model4.{epoch:02d}-{val_loss:.2f}.hdf5', verbose=1, save_best_only=True)

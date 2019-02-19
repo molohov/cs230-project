@@ -11,11 +11,10 @@ import collections
 from collections import defaultdict
 from itertools import chain
 from PIL import Image
-from resizeimage import resizeimage
 
 import json
 
-perform_resize = False
+perform_resize = 1
 resized_dimensions = [150, 150]
 
 all_images = defaultdict(list)
@@ -24,12 +23,12 @@ dev = defaultdict(list)
 test = defaultdict(list)
 
 source_image_dir = "../food-101/images/"
-train_dir        =  "data_full_150_150/train"
-dev_dir          =  "data_full_150_150/dev"
-test_dir         =  "data_full_150_150/test"
-train_dict       = "train_full_150_150.dict"
-dev_dict         =   "dev_full_150_150.dict"
-test_dict        =  "test_full_150_150.dict"
+train_dir        = "data_full/train"
+dev_dir          = "data_full/dev"
+test_dir         = "data_full/test"
+train_dict       = "train_full.dict"
+dev_dict         = "dev_full.dict"
+test_dict        = "test_full.dict"
 
 folders = [i for i in os.listdir(source_image_dir)]
 
@@ -50,12 +49,12 @@ for food in all_images:
 
     dev_set_start   = 0
     dev_set_end     = dev_set_start + dev_set_size
-    test_set_start  = dev_set_end
+    test_set_start  = dev_set_end + 1
     test_set_end    = test_set_start + test_set_size
-    train_set_start = test_set_end
+    train_set_start = test_set_end + 1
     train_set_end   = train_set_start + train_set_size
 
-    print (food + " - S: " + str(size) + " D: " + str(dev_set_start) + ":" + str(dev_set_end) + " T: " + str(test_set_start) + ":" + str(test_set_end) + " R: " + str(train_set_start) + ":" + str(train_set_end))
+    #print (food + " - S: " + str(size) + " D: " + str(dev_set_start) + ":" + str(dev_set_end) + " T: " + str(test_set_start) + ":" + str(test_set_end) + " R: " + str(train_set_start) + ":" + str(train_set_end))
 
     dev[food] = all_images[food][dev_set_start:dev_set_end]
     test[food] = all_images[food][test_set_start:test_set_end]
@@ -77,6 +76,7 @@ f.write(string)
 f.close()
 
 for food in all_images:
+    print("Processing " + food + " images...")
     source_dir = source_image_dir + food + "/"
     dest_dev_dir   = dev_dir   + "/" + food + "/"
     dest_test_dir  = test_dir  + "/" + food + "/"
@@ -87,7 +87,7 @@ for food in all_images:
         img = Image.open(source_dir + pic)
         if perform_resize:
             width, height = img.size
-            img = resizeimage.resize_contain(img, resized_dimensions)
+            img = img.resize(resized_dimensions)
         img.save(dest_dev_dir + pic, img.format)
 
     os.makedirs(dest_test_dir)
