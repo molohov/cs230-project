@@ -1,4 +1,3 @@
-
 # coding: utf-8
 import numpy as np
 from keras import layers
@@ -46,7 +45,8 @@ import h5py
 #X_train = np.array(dev_set["data"])
 #Y_train = np.array(dev_set["labels"])
 
-X_train, Y_train, classes_to_index, index_to_classes = load_devset("../../data_full_150_150/dev", "../../dev.dict")
+X_train, Y_train, classes_to_index, index_to_classes = load_devset("../../data_full_150_150/train", "../../train_full.dict")
+X_dev, Y_dev, classes_to_index, index_to_classes = load_devset("../../data_full_150_150/dev", "../../dev_full.dict")
 num_classes = Y_train.shape[1]
 
 
@@ -110,19 +110,17 @@ K.clear_session()
 
 base_model = InceptionV3(weights='imagenet', include_top=False, input_tensor=Input(shape=(150, 150, 3)))
 x = base_model.output
-x = AveragePooling2D(pool_size=(3, 3))(x)
-#x = Dropout(.4)(x)
+#x = AveragePooling2D(pool_size=(3, 3))(x)
+x = Dropout(.4)(x)
 x = Flatten()(x)
-#x = Dense(3 * num_classes, activation='relu')(x)
 predictions = Dense(num_classes, init='glorot_uniform', W_regularizer=l2(.0005), activation='softmax')(x)
 
 model = Model(input=base_model.input, output=predictions)
 
 opt = SGD(lr=.01, momentum=.9)
-#opt = Adam(lr=.015, beta_1=0.9, beta_2=0.999, decay=0.05, amsgrad=False)
 model.compile(optimizer=opt, loss='categorical_crossentropy', metrics=['accuracy'])
 
-model.fit(x=X_train, y=Y_train, epochs=5, batch_size=64)
+model.fit(x=X_train, y=Y_train, epochs=10, batch_size=32)
 
 #checkpointer = ModelCheckpoint(filepath='model4.{epoch:02d}-{val_loss:.2f}.hdf5', verbose=1, save_best_only=True)
 #csv_logger = CSVLogger('model4.log')
@@ -165,10 +163,14 @@ model.fit(x=X_train, y=Y_train, epochs=5, batch_size=64)
 #preds = testCNN.evaluate(x = X_train, y = Y_train)
 preds = model.evaluate(x = X_train, y = Y_train)
 
-print()
+print("Train Set")
 print ("Loss = " + str(preds[0]))
 print ("Test Accuracy = " + str(preds[1]))
 
+preds = model.evaluate(x = X_dev, y = Y_dev)
+print("Dev Set")
+print ("Loss = " + str(preds[0]))
+print ("Test Accuracy = " + str(preds[1]))
 
 #img_path = 'images/my_image.jpg'
 #img = image.load_img(img_path, target_size=(64, 64))

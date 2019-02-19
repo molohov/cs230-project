@@ -18,7 +18,7 @@ from keras.utils.np_utils import to_categorical
 import json
 
 # Load dataset images and resize to square image
-def load_images(root, class_to_index, size=300):
+def load_images(root, class_to_index):
     all_imgs = []
     all_classes = []
     resize_count = 0
@@ -26,14 +26,14 @@ def load_images(root, class_to_index, size=300):
     for i, subdir in enumerate(listdir(root)):
         imgs = listdir(join(root, subdir))
         ## FIXME forcefully load just 5 images for now to speed things up
-        imgs = imgs[0:5]
+        #imgs = imgs[0:5]
         class_ix = class_to_index[subdir]
         print(i, class_ix, subdir)
         for img_name in imgs:
             ## TODO: imread will be deprecated. python suggests using Image.resize, but too lazy to fix
             img_arr_rs = img.imread(join(root, subdir, img_name))
             try:
-                img_arr_rs = imresize(img_arr_rs, (size, size))
+                #img_arr_rs = imresize(img_arr_rs, (size, size))
                 all_imgs.append(img_arr_rs)
                 all_classes.append(class_ix)
             except:
@@ -61,7 +61,7 @@ def load_devset(path_to_devset, path_to_dev_dict):
     #print(sorted_class_to_index)
 
         
-    X_test, y_test = load_images(path_to_devset, class_to_index, size=300)
+    X_test, y_test = load_images(path_to_devset, class_to_index)
 
     # normalize. for some reason this takes an ENORMOUS amount of memory, hence commenting out for now
     #X_test = X_test / 255.

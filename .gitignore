@@ -3,6 +3,10 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Dataset.  Use partition_data.py to create this locally
+data_full/
+data_full_150_150/
+
 # C extensions
 *.so
 
