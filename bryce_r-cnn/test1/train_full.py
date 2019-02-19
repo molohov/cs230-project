@@ -62,7 +62,7 @@ output_file_name   = 'train_full.csv'
 # Takes a filehandle and a message as arguments.
 # Prints the message to the filehandle and STDOUT
 def printAndWrite(filehandle, message):
-    f.write(message + '\n')
+    filehandle.write(message + '\n')
     print (message)
 
 # init
