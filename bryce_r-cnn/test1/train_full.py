@@ -116,10 +116,12 @@ def create_model(num_classes, learning_rate = 0.01, momentum = 0.8, l2_regulariz
 # train the model on train set and evaluate it on dev set
 def train_and_eval(model, X_train, Y_train, X_dev, Y_dev, output_file_name = 'train_full.csv'):
     f = open(output_file_name, 'w')
-    printAndWrite (f, "Early Termination: " + str(early_termination) + " - " + str(epoch_count) + " Epochs - MiniBatch Size " + str(minibatch_size) + '\n')
+    printAndWrite (f, "Early Termination: " + str(early_termination) + " - " + str(epoch_count) + " Epochs - MiniBatch Size " + str(minibatch_size) + ' - Learning Rate ' + str(learning_rate) + ' Momentum ' + str(momentum) + ' \n')
     printAndWrite (f, 'Epoch, Train-Loss, Train-Accuracy, Dev-Loss, Dev-Accuracy')
 
     for current_epoch in range(epoch_count):
+        print ('Starting Epoch ' + current_epoch + '/' + epoch_count)
+
         model.fit(x=X_train, y=Y_train, epochs=1, batch_size=minibatch_size)
 
         train_preds = model.evaluate(x = X_train, y = Y_train)
