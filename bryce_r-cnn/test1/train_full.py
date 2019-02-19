@@ -42,10 +42,10 @@ epoch_count = 30
 minibatch_size = 64
 
 # Data set vars
-train_set_loc   = "../../data_full_150_150/train"
-train_dict_loc  = "../../train_full_150_150.dict"
-dev_set_loc     = "../../data_full_150_150/dev"
-dev_dict_loc    = "../../dev_full_150_150.dict"
+train_set_loc   = "../../data_full/train"
+train_dict_loc  = "../../train_full.dict"
+dev_set_loc     = "../../data_full/dev"
+dev_dict_loc    = "../../dev_full.dict"
 
 # model vars
 freeze_base_model  = False
@@ -102,7 +102,7 @@ def create_model(num_classes, learning_rate = 0.01, momentum = 0.8, l2_regulariz
     x = AveragePooling2D(pool_size=(4, 4), padding = 'same')(x)
     x = Dropout(.4)(x)
     x = Flatten()(x)
-    x = Dense(num_classes, init='glorot_uniform', kernel_regularizer=l2(l2_regularizer), activation='softmax')(x)
+    x = Dense(num_classes, kernel_initializer='glorot_uniform', kernel_regularizer=l2(l2_regularizer), activation='softmax')(x)
 
     model = Model(input=base_model.input, output=x)
 
