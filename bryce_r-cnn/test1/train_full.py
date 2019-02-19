@@ -39,7 +39,7 @@ early_termination = 450
 epoch_count = 30
 
 # minibatch_size: sets the minibatch size
-minibatch_size = 64
+minibatch_size = 128
 
 # Data set vars
 train_set_loc   = "../../data_full/train"
@@ -51,6 +51,7 @@ dev_dict_loc    = "../../dev_full.dict"
 freeze_base_model  = False
 learning_rate      = 0.01
 momentum           = 0.8
+l2_regularizer     = 0.2
 
 # output file name
 output_file_name   = 'train_full.csv'
@@ -116,11 +117,11 @@ def create_model(num_classes, learning_rate = 0.01, momentum = 0.8, l2_regulariz
 # train the model on train set and evaluate it on dev set
 def train_and_eval(model, X_train, Y_train, X_dev, Y_dev, output_file_name = 'train_full.csv'):
     f = open(output_file_name, 'w')
-    printAndWrite (f, "Early Termination: " + str(early_termination) + " - " + str(epoch_count) + " Epochs - MiniBatch Size " + str(minibatch_size) + ' - Learning Rate ' + str(learning_rate) + ' Momentum ' + str(momentum) + ' \n')
+    printAndWrite (f, "Early Termination: " + str(early_termination) + " - " + str(epoch_count) + " Epochs - MiniBatch Size " + str(minibatch_size) + ' - Learning Rate ' + str(learning_rate) + ' - Momentum ' + str(momentum) + ' - L2_regularizator ' + str(l2_regularizer) + ' \n')
     printAndWrite (f, 'Epoch, Train-Loss, Train-Accuracy, Dev-Loss, Dev-Accuracy')
 
     for current_epoch in range(epoch_count):
-        print ('Starting Epoch ' + current_epoch + '/' + epoch_count)
+        print ('Starting Epoch ' + str(current_epoch) + '/' + str(epoch_count))
 
         model.fit(x=X_train, y=Y_train, epochs=1, batch_size=minibatch_size)
 
@@ -134,6 +135,6 @@ def train_and_eval(model, X_train, Y_train, X_dev, Y_dev, output_file_name = 'tr
 # >>>>> Main Executable Logic <<<<<
 X_train, Y_train, X_dev, Y_dev, num_classes = init()
 
-model = create_model(num_classes, learning_rate = learning_rate, momentum = momentum)
+model = create_model(num_classes, learning_rate = learning_rate, momentum = momentum, l2_regularizer = l2_regularizer)
 
 train_and_eval(model, X_train, Y_train, X_dev, Y_dev, output_file_name = output_file_name)
