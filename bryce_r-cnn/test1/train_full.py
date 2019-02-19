@@ -45,8 +45,12 @@ import h5py
 #X_train = np.array(dev_set["data"])
 #Y_train = np.array(dev_set["labels"])
 
-X_train, Y_train, classes_to_index, index_to_classes = load_devset("../../data_full_150_150/train", "../../train_full.dict")
-X_dev, Y_dev, classes_to_index, index_to_classes = load_devset("../../data_full_150_150/dev", "../../dev_full.dict")
+early_termination = -1
+epoch_count = 30
+minibatch_size = 64
+
+X_train, Y_train, classes_to_index, index_to_classes = load_devset("../../data_full_150_150/train", "../../train_full_150_150.dict", early_termination = early_termination)
+X_dev, Y_dev, classes_to_index, index_to_classes = load_devset("../../data_full_150_150/dev", "../../dev_full_150_150.dict")
 num_classes = Y_train.shape[1]
 
 
@@ -70,6 +74,9 @@ print ("Y_train shape: " + str(Y_train.shape))
 # **Details of our food dataset
 # - Images are of shape (300, 300, 3) (can be configured in load_devset function)
 # - dev set: 505 pictures (5050 if load_devset is un-gimped)
+def printAndWrite(filehandle, message):
+    f.write(message + '\n')
+    print (message)
 
 def TestCNN(input_shape):
     """
@@ -109,18 +116,28 @@ def TestCNN(input_shape):
 K.clear_session()
 
 base_model = InceptionV3(weights='imagenet', include_top=False, input_tensor=Input(shape=(150, 150, 3)))
+
+#for layer in base_model.layers:
+#    layer.trainable = False
+
 x = base_model.output
-#x = AveragePooling2D(pool_size=(3, 3))(x)
+x = AveragePooling2D(pool_size=(4, 4), padding = 'same')(x)
 x = Dropout(.4)(x)
 x = Flatten()(x)
-predictions = Dense(num_classes, init='glorot_uniform', W_regularizer=l2(.0005), activation='softmax')(x)
+#x = Dense(3 * num_classes, activation='relu')(x)
+predictions = Dense(num_classes, init='glorot_uniform', kernel_regularizer=l2(0.05), activation='softmax')(x)
 
 model = Model(input=base_model.input, output=predictions)
 
 opt = SGD(lr=.01, momentum=.9)
 model.compile(optimizer=opt, loss='categorical_crossentropy', metrics=['accuracy'])
 
-model.fit(x=X_train, y=Y_train, epochs=10, batch_size=32)
+f = open("train_full.csv", 'w')
+printAndWrite (f, "Early Termination: " + str(early_termination) + " - " + str(epoch_count) + " Epochs - MiniBatch Size " + str(minibatch_size))
+printAndWrite (f, '\nEpoch, Train-Loss, Train-Accuracy, Dev-Loss, Dev-Accuracy\n')
+
+for current_epoch in range(epoch_count):
+    model.fit(x=X_train, y=Y_train, epochs=1, batch_size=minibatch_size)
 
 #checkpointer = ModelCheckpoint(filepath='model4.{epoch:02d}-{val_loss:.2f}.hdf5', verbose=1, save_best_only=True)
 #csv_logger = CSVLogger('model4.log')
@@ -161,16 +178,10 @@ model.fit(x=X_train, y=Y_train, epochs=10, batch_size=32)
 # 4. Test/evaluate the model (for now evaluating on the training set lol)
 #preds = testCNN.evaluate(x = X_test, y = Y_test)
 #preds = testCNN.evaluate(x = X_train, y = Y_train)
-preds = model.evaluate(x = X_train, y = Y_train)
+    train_preds = model.evaluate(x = X_train, y = Y_train)
+    dev_preds   = model.evaluate(x = X_dev, y = Y_dev)
 
-print("Train Set")
-print ("Loss = " + str(preds[0]))
-print ("Test Accuracy = " + str(preds[1]))
-
-preds = model.evaluate(x = X_dev, y = Y_dev)
-print("Dev Set")
-print ("Loss = " + str(preds[0]))
-print ("Test Accuracy = " + str(preds[1]))
+    printAndWrite (f, str(current_epoch + 1) + ", " + str(train_preds[0]) + ", " + str(train_preds[1]) + ", " + str(dev_preds[0]) + ", " + str(dev_preds[1]))
 
 #img_path = 'images/my_image.jpg'
 #img = image.load_img(img_path, target_size=(64, 64))
@@ -192,3 +203,4 @@ print ("Test Accuracy = " + str(preds[1]))
 # Run the following code.
 #SVG(model_to_dot(testCNN).create(prog='dot', format='svg'))
 
+f.close()

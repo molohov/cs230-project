@@ -18,7 +18,7 @@ from keras.utils.np_utils import to_categorical
 import json
 
 # Load dataset images and resize to square image
-def load_images(root, class_to_index):
+def load_images(root, class_to_index, early_termination = -1):
     all_imgs = []
     all_classes = []
     resize_count = 0
@@ -26,7 +26,7 @@ def load_images(root, class_to_index):
     for i, subdir in enumerate(listdir(root)):
         imgs = listdir(join(root, subdir))
         ## FIXME forcefully load just 5 images for now to speed things up
-        #imgs = imgs[0:5]
+        imgs = imgs[0:early_termination]
         class_ix = class_to_index[subdir]
         print(i, class_ix, subdir)
         for img_name in imgs:
@@ -45,7 +45,7 @@ def load_images(root, class_to_index):
     return np.array(all_imgs), np.array(all_classes)
 
 
-def load_devset(path_to_devset, path_to_dev_dict): 
+def load_devset(path_to_devset, path_to_dev_dict, early_termination = -1): 
     #path_to_dataset = "../food-101/images"
     #path_to_devset = "./data/dev"
     #path_to_dev_dict = "dev.dict"
@@ -61,7 +61,7 @@ def load_devset(path_to_devset, path_to_dev_dict):
     #print(sorted_class_to_index)
 
         
-    X_test, y_test = load_images(path_to_devset, class_to_index)
+    X_test, y_test = load_images(path_to_devset, class_to_index, early_termination)
 
     # normalize. for some reason this takes an ENORMOUS amount of memory, hence commenting out for now
     #X_test = X_test / 255.

@@ -6,6 +6,7 @@ __pycache__/
 # Dataset.  Use partition_data.py to create this locally
 data_full/
 data_full_150_150/
+data_full_150_150_bak/
 
 # C extensions
 *.so

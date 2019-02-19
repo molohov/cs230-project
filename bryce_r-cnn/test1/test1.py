@@ -109,8 +109,12 @@ def TestCNN(input_shape):
 K.clear_session()
 
 base_model = InceptionV3(weights='imagenet', include_top=False, input_tensor=Input(shape=(150, 150, 3)))
+
+for layer in base_model.layers:
+    layer.trainable = False
+
 x = base_model.output
-x = AveragePooling2D(pool_size=(3, 3))(x)
+x = AveragePooling2D(pool_size=(8, 8), padding='same')(x)
 #x = Dropout(.4)(x)
 x = Flatten()(x)
 #x = Dense(3 * num_classes, activation='relu')(x)

@@ -1,0 +1,12 @@
+Early Termination @ 250 - 10 Epoch - MiniBatch 32
+
+Train Set
+Loss = 0.8950705029232667
+Accuracy = 0.7902178217821783
+
+Dev Set
+Loss = 3.5573625295469076
+Accuracy = 0.39643564359976513
+
+
+No Early Termination - 30 Epoch - MiniBatch 64
