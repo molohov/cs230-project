@@ -15,7 +15,7 @@ from resizeimage import resizeimage
 
 import json
 
-perform_resize = 1
+perform_resize = False
 resized_dimensions = [150, 150]
 
 all_images = defaultdict(list)

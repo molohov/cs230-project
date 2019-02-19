@@ -14,7 +14,6 @@ from itertools import chain
 from shutil import copyfile
 from keras.utils.np_utils import to_categorical
 
-
 import json
 
 # Load dataset images and resize to square image
