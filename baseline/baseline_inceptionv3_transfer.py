@@ -45,8 +45,9 @@ import h5py
 #X_train = np.array(dev_set["data"])
 #Y_train = np.array(dev_set["labels"])
 
-X_train, Y_train, classes_to_index, index_to_classes = load_devset("../data_full/dev", "../dev_full.dict")
-#X_dev, Y_dev, classes_to_index, index_to_classes = load_devset("../data_full/dev", "../dev_full.dict")
+X_train, Y_train, classes_to_index, index_to_classes = load_devset(
+    r"C:\Users\priyalm\PycharmProjects\cs230-project/data_full_150_150/dev", r"C:\Users\priyalm\PycharmProjects\cs230-project/dev_full.dict")
+#X_dev, Y_dev, classes_to_index, index_to_classes = load_devset("../data_full/dev", "../dev_full_150_150.dict")
 num_classes = Y_train.shape[1]
 
 
