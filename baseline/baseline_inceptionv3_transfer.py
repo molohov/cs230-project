@@ -34,12 +34,14 @@ epoch_count = 30
 
 # minibatch_size: sets the minibatch size
 minibatch_size = 128
+length = 150
+width = 150
 
 # Data set vars
-train_set_loc   = "../data_full/train"
-train_dict_loc  = "../train_full.dict"
-dev_set_loc     = "../data_full/dev"
-dev_dict_loc    = "../dev_full.dict"
+train_set_loc   = "../data_full_"+str(length)+"_"+str(width)+"/train""
+train_dict_loc  = "../train_full_"+str(length)+"_"+str(width)+".dict"
+dev_set_loc     = "../data_full_"+str(length)+"_"+str(width)+"/dev"
+dev_dict_loc    = "../dev_full_"+str(length)+"_"+str(width)+".dict"
 
 # model vars
 freeze_base_model  = False
@@ -66,7 +68,7 @@ def printAndWrite(filehandle, message):
 def init():
     K.set_image_data_format('channels_last')
 
-    X_train, Y_train, _, _ = load_dataset(train_set_loc, train_dict_loc, early_termination = early_termination)
+    X_train, Y_train, _, _ = load_dataset(train_set_loc, train_dict_loc, early_termination=early_termination)
     X_dev, Y_dev, _, _ = load_dataset(dev_set_loc, dev_dict_loc)
 
     num_classes = Y_train.shape[1]

@@ -15,7 +15,9 @@ from PIL import Image
 import json
 
 perform_resize = False
-resized_dimensions = [150, 150]
+length = 150
+width = 150
+resized_dimensions = [length, width]
 
 all_images = defaultdict(list)
 train = defaultdict(list)
@@ -23,12 +25,12 @@ dev = defaultdict(list)
 test = defaultdict(list)
 
 source_image_dir = "../food-101/images/"
-train_dir        =  "data_full_150_150/train"
-dev_dir          =  "data_full_150_150/dev"
-test_dir         =  "data_full_150_150/test"
-train_dict       = "train_full_150_150.dict"
-dev_dict         =   "dev_full_150_150.dict"
-test_dict        =  "test_full_150_150.dict"
+train_dir        =  "data_full_"+str(length)+"_"+str(width)+"/train"
+dev_dir          =  "data_full_"+str(length)+"_"+str(width)+"/dev"
+test_dir         =  "data_full_"+str(length)+"_"+str(width)+"/test"
+train_dict       = "train_full_"+str(length)+"_"+str(width)+".dict"
+dev_dict         =   "dev_full_"+str(length)+"_"+str(width)+".dict"
+test_dict        =  "test_full_"+str(length)+"_"+str(width)+".dict"
 
 folders = [i for i in os.listdir(source_image_dir)]
 
