@@ -51,11 +51,11 @@ def load_dataset(path_to_dataset, path_to_dict, early_termination = -1):
     index_to_class = dict(zip(range(num_classes), dataset))
     class_to_index = {v: k for k, v in index_to_class.items()}
 
-    X_test, Y_test = load_images(path_to_dataset, class_to_index, early_termination)
+    data, label = load_images(path_to_dataset, class_to_index, early_termination)
 
     # normalize. for some reason this takes an ENORMOUS amount of memory, hence commenting out for now
-    #X_test = X_test / 255.
+    data = data / 255.
 
-    Y_test_1hot = to_categorical(Y_test, num_classes=num_classes)
+    label_1hot = to_categorical(label, num_classes=num_classes)
 
-    return X_test, Y_test_1hot, class_to_index, index_to_class
+    return data, label_1hot, class_to_index, index_to_class
