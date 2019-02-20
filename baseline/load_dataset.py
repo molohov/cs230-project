@@ -50,7 +50,6 @@ def load_dataset(path_to_dataset, path_to_dict, early_termination = -1):
     class_to_index = dict(zip(dataset, range(num_classes)))
     index_to_class = dict(zip(range(num_classes), dataset))
     class_to_index = {v: k for k, v in index_to_class.items()}
-    sorted_class_to_index = collections.OrderedDict(sorted(class_to_index.items()))
 
     X_test, Y_test = load_images(path_to_dataset, class_to_index, early_termination)
 
@@ -59,4 +58,4 @@ def load_dataset(path_to_dataset, path_to_dict, early_termination = -1):
 
     Y_test_1hot = to_categorical(Y_test, num_classes=num_classes)
 
-    return X_test, Y_test_1hot
+    return X_test, Y_test_1hot, class_to_index, index_to_class
