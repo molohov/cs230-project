@@ -20,7 +20,7 @@ import pydot
 from IPython.display import SVG
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import imshow
-from load_devset import *
+from load_dataset import *
 import math
 import h5py
 
@@ -66,8 +66,8 @@ def printAndWrite(filehandle, message):
 def init():
     K.set_image_data_format('channels_last')
 
-    X_train, Y_train, _, _ = load_devset(train_set_loc, train_dict_loc, early_termination = early_termination)
-    X_dev, Y_dev, _, _ = load_devset(dev_set_loc, dev_dict_loc)
+    X_train, Y_train = load_dataset(train_set_loc, train_dict_loc, early_termination = early_termination)
+    X_dev, Y_dev = load_dataset(dev_set_loc, dev_dict_loc)
 
     num_classes = Y_train.shape[1]
 
