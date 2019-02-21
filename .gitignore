@@ -7,6 +7,7 @@ __pycache__/
 data_full/
 data_full_150_150/
 data_full_150_150_bak/
+image_download/
 
 # C extensions
 *.so
@@ -107,3 +108,7 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# train_full.csv
+baseline/train_full.csv
+dev/train_full.csv

@@ -54,7 +54,7 @@ def load_dataset(path_to_dataset, path_to_dict, early_termination = -1):
     data, label = load_images(path_to_dataset, class_to_index, early_termination)
 
     # normalize. for some reason this takes an ENORMOUS amount of memory, hence commenting out for now
-    data = data / 255.
+    #data = data / 255.
 
     label_1hot = to_categorical(label, num_classes=num_classes)
 
