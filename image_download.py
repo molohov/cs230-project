@@ -1,14 +1,15 @@
+# docmentation for google_images_download API can be found at
 # https://github.com/hardikvasa/google-images-download
 
 from google_images_download import google_images_download
 from os import listdir
 
+# grab the source image dir for the labels to download additional data for
 source_image_dir = "../food-101/images/"
-folders = [i for i in listdir(source_image_dir)]
 
 response = google_images_download.googleimagesdownload()
 
-for food in folders:
+for food in listdir(source_image_dir):
     food_keyword = food
     food_keyword.replace('_', ' ')
     arguments = {
@@ -22,4 +23,3 @@ for food in folders:
     }
 
     paths = response.download(arguments)
-    print(paths)
