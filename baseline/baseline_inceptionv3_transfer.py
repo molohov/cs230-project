@@ -38,7 +38,7 @@ length = 150
 width = 150
 
 # Data set vars
-train_set_loc   = "../data_full_"+str(length)+"_"+str(width)+"/train""
+train_set_loc   = "../data_full_"+str(length)+"_"+str(width)+"/train"
 train_dict_loc  = "../train_full_"+str(length)+"_"+str(width)+".dict"
 dev_set_loc     = "../data_full_"+str(length)+"_"+str(width)+"/dev"
 dev_dict_loc    = "../dev_full_"+str(length)+"_"+str(width)+".dict"
