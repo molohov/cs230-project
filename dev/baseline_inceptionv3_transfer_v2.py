@@ -25,10 +25,14 @@ import h5py
 # import parallelTestModule
 import json
 
+length = 150
+width = 150
+train_set_loc = "../data_full_" + str(length) + "_" + str(width) + "/train"
+dev_set_loc = "../data_full_" + str(length) + "_" + str(width) + "/dev"
 
 # Parameters
 params = {'dim': (150,150),
-          'batch_size': 64,
+          'batch_size': 32,
           'n_classes': 101,
           'n_channels': 3,
           'shuffle': True}
@@ -39,59 +43,18 @@ learning_rate      = 0.01
 momentum           = 0.8
 l2_regularizer     = 0.2
 
-# Data set vars
-length = 150
-width = 150
-train_set_loc   = "../data_full_"+str(length)+"_"+str(width)+"/train"
-train_dict_loc  = "../train_full_"+str(length)+"_"+str(width)+".dict"
-dev_set_loc     = "../data_full_"+str(length)+"_"+str(width)+"/dev"
-dev_dict_loc    = "../dev_full_"+str(length)+"_"+str(width)+".dict"
 
-with open(train_dict_loc,'r') as inf:
-    dict_from_file = eval(inf.read())
+partition_dict_loc = "./partition.dict"
+labels_dict_loc = "./labels.dict"
 
-partition = {}
-labels = {}
-class_id_indexes = {}
-class_id_counter = 0
-for class_id in dict_from_file:
-    image_ids = dict_from_file[class_id]
-    new_image_ids = []
-    for img in image_ids:
-        new_image_ids.append(class_id+"/"+img)
-    if 'train' in partition:
-        partition['train'].extend(new_image_ids)
-    else:
-        partition['train'] = new_image_ids
-    for image in new_image_ids:
-        if class_id in class_id_indexes:
-            labels[image] = class_id_indexes[class_id]
-        else:
-            class_id_indexes[class_id] = class_id_counter
-            labels[image] = class_id_counter
-            class_id_counter = class_id_counter + 1
+with open(partition_dict_loc,'r') as inf:
+    partition_dict = eval(inf.read())
 
-with open(dev_dict_loc,'r') as inf:
-    dict_from_file = eval(inf.read())
+with open(labels_dict_loc,'r') as inf:
+    labels_dict = eval(inf.read())
 
-for class_id in dict_from_file:
-    image_ids = dict_from_file[class_id]
-    new_image_ids = []
-    for img in image_ids:
-        new_image_ids.append(class_id + "/" + img)
-    if 'validation' in partition:
-        partition['validation'].extend(new_image_ids)
-    else:
-        partition['validation'] = new_image_ids
-    for image in new_image_ids:
-        labels[image] = class_id_indexes[class_id]
-
-with open('file_train.txt', 'w') as file:
-    file.write(json.dumps(partition))  # use `json.loads` to do the reverse
-
-with open('file_dev.txt', 'w') as file:
-    file.write(json.dumps(labels))  # use `json.loads` to do the reverse
-
+partition = partition_dict
+labels = labels_dict
 
 # create_model
 #

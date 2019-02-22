@@ -29,7 +29,7 @@ class DataGenerator(keras.utils.Sequence):
         'Generates data containing batch_size samples' # X : (n_samples, *dim, n_channels)
         # Initialization
         X = np.empty((self.batch_size, *self.dim, self.n_channels))
-        print(X.shape)
+        # print(X.shape)
         y = np.empty((self.batch_size), dtype=int)
 
         # Generate data
@@ -37,8 +37,8 @@ class DataGenerator(keras.utils.Sequence):
             # Store sample
             # X[i,] = np.load('data/' + ID + '.npy')
             # print(ID)
-            print(np.array(Image.open(self.path_to_dataset + "/" + ID)).shape)
-            X[i,] = np.array(Image.open(self.path_to_dataset+"/"+ID))
+            # print(np.array(Image.open(self.path_to_dataset + "/" + ID)).shape)
+            X[i,] = np.array(Image.open(self.path_to_dataset+"/"+ID)) / 255
 
             # Store class
             # print(self.labels)
