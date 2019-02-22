@@ -112,3 +112,8 @@ venv.bak/
 # train_full.csv
 baseline/train_full.csv
 dev/train_full.csv
+
+# intermediate dictionaries
+dev/partition.dict
+dev/labels.dict
+dev/class_id_indexes.dict
