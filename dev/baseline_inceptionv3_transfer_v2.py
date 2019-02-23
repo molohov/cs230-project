@@ -32,16 +32,13 @@ with open(master_config.partition_dict_loc,'r') as inf:
 with open(master_config.labels_dict_loc,'r') as inf:
     labels = eval(inf.read())
 
-# partition = partition_dict
-# labels = labels_dict
-
 # create_model
 #
 # Create the neural network model
 def create_model(num_classes=master_config.params['n_classes'], learning_rate = 0.01, momentum = 0.8, l2_regularizer = 0.05):
     ## load in inceptionv3 model
     K.clear_session()
-    base_model = InceptionV3(weights='imagenet', include_top=False, input_tensor=Input(shape=(150, 150, 3)))
+    base_model = InceptionV3(weights='imagenet', include_top=False, input_tensor=Input(shape=(master_config.height, master_config.width, master_config.num_channels)), pooling='max')
 
     if master_config.freeze_base_model:
         for layer in base_model.layers:
@@ -49,9 +46,9 @@ def create_model(num_classes=master_config.params['n_classes'], learning_rate = 
 
     # Custom layers after base model's output
     x = base_model.output
-    x = AveragePooling2D(pool_size=(4, 4), padding = 'same')(x)
-    x = Dropout(.4)(x)
-    x = Flatten()(x)
+    #x = AveragePooling2D(pool_size=(4, 4), padding = 'same')(x)
+    #x = Dropout(.4)(x)
+    #x = Flatten()(x)
     x = Dense(num_classes, kernel_initializer='glorot_uniform', kernel_regularizer=l2(l2_regularizer), activation='softmax')(x)
 
     model = Model(inputs=base_model.input, outputs=x)
@@ -78,7 +75,7 @@ def main():
                         validation_data=validation_generator,
                         use_multiprocessing=True,
                         workers=4,
-                        epochs=3)
+                        epochs=master_config.num_epochs)
 
 # if __name__ == '__main__':
 #     extractor = parallelTestModule.ParallelExtractor()
