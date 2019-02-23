@@ -24,47 +24,48 @@ import math
 import h5py
 # import parallelTestModule
 import json
+import master_config
+#
+# length = 150
+# width = 150
+# train_set_loc = "../data_full_" + str(length) + "_" + str(width) + "/train"
+# dev_set_loc = "../data_full_" + str(length) + "_" + str(width) + "/dev"
+#
+# # Parameters
+# params = {'dim': (150,150),
+#           'batch_size': 32,
+#           'n_classes': 101,
+#           'n_channels': 3,
+#           'shuffle': True}
+#
+# # model vars
+# freeze_base_model  = False
+# learning_rate      = 0.01
+# momentum           = 0.8
+# l2_regularizer     = 0.2
+#
+#
+# partition_dict_loc = "./partition.dict"
+# labels_dict_loc = "./labels.dict"
 
-length = 150
-width = 150
-train_set_loc = "../data_full_" + str(length) + "_" + str(width) + "/train"
-dev_set_loc = "../data_full_" + str(length) + "_" + str(width) + "/dev"
+with open(master_config.partition_dict_loc,'r') as inf:
+    partition = eval(inf.read())
 
-# Parameters
-params = {'dim': (150,150),
-          'batch_size': 32,
-          'n_classes': 101,
-          'n_channels': 3,
-          'shuffle': True}
+with open(master_config.labels_dict_loc,'r') as inf:
+    labels = eval(inf.read())
 
-# model vars
-freeze_base_model  = False
-learning_rate      = 0.01
-momentum           = 0.8
-l2_regularizer     = 0.2
-
-
-partition_dict_loc = "./partition.dict"
-labels_dict_loc = "./labels.dict"
-
-with open(partition_dict_loc,'r') as inf:
-    partition_dict = eval(inf.read())
-
-with open(labels_dict_loc,'r') as inf:
-    labels_dict = eval(inf.read())
-
-partition = partition_dict
-labels = labels_dict
+# partition = partition_dict
+# labels = labels_dict
 
 # create_model
 #
 # Create the neural network model
-def create_model(num_classes=params['n_classes'], learning_rate = 0.01, momentum = 0.8, l2_regularizer = 0.05):
+def create_model(num_classes=master_config.params['n_classes'], learning_rate = 0.01, momentum = 0.8, l2_regularizer = 0.05):
     ## load in inceptionv3 model
     K.clear_session()
     base_model = InceptionV3(weights='imagenet', include_top=False, input_tensor=Input(shape=(150, 150, 3)))
 
-    if freeze_base_model:
+    if master_config.freeze_base_model:
         for layer in base_model.layers:
             layer.trainable = False
 
@@ -88,17 +89,18 @@ def create_model(num_classes=params['n_classes'], learning_rate = 0.01, momentum
 
 # Generators
 def main():
-    training_generator = DataGenerator(partition['train'], labels, train_set_loc, 'train', **params)
-    validation_generator = DataGenerator(partition['validation'], labels, dev_set_loc, 'dev', **params)
+    training_generator = DataGenerator(partition['train'], labels, master_config.train_set_loc, 'train', **master_config.params)
+    validation_generator = DataGenerator(partition['validation'], labels, master_config.dev_set_loc, 'dev', **master_config.params)
 
     # Design model
-    model = create_model(params['n_classes'], learning_rate = learning_rate, momentum = momentum, l2_regularizer = l2_regularizer)
+    model = create_model(master_config.params['n_classes'], learning_rate = master_config.learning_rate, momentum = master_config.momentum, l2_regularizer = master_config.l2_regularizer)
 
     # Train model on dataset
     model.fit_generator(generator=training_generator,
                         validation_data=validation_generator,
                         use_multiprocessing=True,
-                        workers=4)
+                        workers=4,
+                        epochs=3)
 
 # if __name__ == '__main__':
 #     extractor = parallelTestModule.ParallelExtractor()

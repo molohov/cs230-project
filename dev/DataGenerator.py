@@ -6,16 +6,18 @@ from keras.preprocessing.image import ImageDataGenerator
 import matplotlib.image as mpimg
 import random
 import tensorflow as tf
+import master_config
 
-aug_params = {
-    'theta': 0,
-    'tx': 0,
-    'ty': 0,
-    'shear': 0,
-    'zx': 1,
-    'zy': 1,
-    'mirror': False
-}
+#
+# aug_params = {
+#     'theta': 0,
+#     'tx': 0,
+#     'ty': 0,
+#     'shear': 0,
+#     'zx': 1,
+#     'zy': 1,
+#     'mirror': False
+# }
 
 class DataGenerator(keras.utils.Sequence):
     def __init__(self, list_IDs, labels, path_to_dataset, subdir, batch_size=32, dim=(150, 150), n_channels=3,
@@ -37,11 +39,11 @@ class DataGenerator(keras.utils.Sequence):
         self.indexes = np.arange(len(self.list_IDs))
         if self.shuffle == True:
             np.random.shuffle(self.indexes)
-        aug_params['theta'] = random.choice([0, 90, 180, 270])
-        aug_params['shear'] = random.choice([0, 10, 20, 30])
-        aug_params['zx'] = random.choice([1, 0.5, 2])
-        aug_params['zy'] = aug_params['zx']
-        aug_params['mirror'] = random.choice([True, False])
+        master_config.aug_params['theta'] = random.choice([0, 90, 180, 270])
+        master_config.aug_params['shear'] = random.choice([0, 10, 20, 30])
+        master_config.aug_params['zx'] = random.choice([1, 0.5, 2])
+        master_config.aug_params['zy'] = master_config.aug_params['zx']
+        master_config.aug_params['mirror'] = random.choice([True, False])
 
     def __data_generation(self, list_IDs_temp):
         'Generates data containing batch_size samples' # X : (n_samples, *dim, n_channels)
@@ -59,16 +61,16 @@ class DataGenerator(keras.utils.Sequence):
             img = mpimg.imread(self.path_to_dataset+"/"+ID)
             img = tf.keras.preprocessing.image.apply_affine_transform(
                 img,
-                theta=aug_params['theta'],
-                shear=aug_params['shear'],
-                zx=aug_params['zx'],
-                zy=aug_params['zy'],
+                theta=master_config.aug_params['theta'],
+                shear=master_config.aug_params['shear'],
+                zx=master_config.aug_params['zx'],
+                zy=master_config.aug_params['zy'],
                 row_axis=0,
                 col_axis=1,
                 channel_axis=2,
                 fill_mode='nearest',
             )
-            if aug_params['mirror']:
+            if master_config.aug_params['mirror']:
                 img = np.fliplr(img)
             X[i,] = np.array(img) / 255
             # Store class

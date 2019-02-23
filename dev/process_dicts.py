@@ -1,14 +1,8 @@
 import json
+import master_config
 
-# Data set vars
-length = 150
-width = 150
-train_set_loc = "../data_full_" + str(length) + "_" + str(width) + "/train"
-train_dict_loc = "../train_full_" + str(length) + "_" + str(width) + ".dict"
-dev_set_loc = "../data_full_" + str(length) + "_" + str(width) + "/dev"
-dev_dict_loc = "../dev_full_" + str(length) + "_" + str(width) + ".dict"
 
-with open(train_dict_loc,'r') as inf:
+with open(master_config.train_dict_loc,'r') as inf:
     dict_from_file = eval(inf.read())
 
 partition = {}
@@ -32,7 +26,7 @@ for class_id in dict_from_file:
             labels[image] = class_id_counter
             class_id_counter = class_id_counter + 1
 
-with open(dev_dict_loc,'r') as inf:
+with open(master_config.dev_dict_loc,'r') as inf:
     dict_from_file = eval(inf.read())
 
 for class_id in dict_from_file:
