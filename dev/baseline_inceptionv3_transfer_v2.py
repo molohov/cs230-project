@@ -25,16 +25,19 @@ import h5py
 # import parallelTestModule
 import json
 
-length = 150
+num_epochs = 10
+
+height = 150
 width = 150
-train_set_loc = "../data_full_" + str(length) + "_" + str(width) + "/train"
-dev_set_loc = "../data_full_" + str(length) + "_" + str(width) + "/dev"
+num_channels = 3
+train_set_loc = "../data_full_" + str(height) + "_" + str(width) + "/train"
+dev_set_loc = "../data_full_" + str(height) + "_" + str(width) + "/dev"
 
 # Parameters
-params = {'dim': (150,150),
-          'batch_size': 32,
+params = {'dim': (height,width),
+          'batch_size': 64,
           'n_classes': 101,
-          'n_channels': 3,
+          'n_channels': num_channels,
           'shuffle': True}
 
 # model vars
@@ -62,7 +65,7 @@ labels = labels_dict
 def create_model(num_classes=params['n_classes'], learning_rate = 0.01, momentum = 0.8, l2_regularizer = 0.05):
     ## load in inceptionv3 model
     K.clear_session()
-    base_model = InceptionV3(weights='imagenet', include_top=False, input_tensor=Input(shape=(150, 150, 3)))
+    base_model = InceptionV3(weights='imagenet', include_top=False, input_tensor=Input(shape=(height, width, num_channels)), pooling='max')
 
     if freeze_base_model:
         for layer in base_model.layers:
@@ -70,9 +73,9 @@ def create_model(num_classes=params['n_classes'], learning_rate = 0.01, momentum
 
     # Custom layers after base model's output
     x = base_model.output
-    x = AveragePooling2D(pool_size=(4, 4), padding = 'same')(x)
-    x = Dropout(.4)(x)
-    x = Flatten()(x)
+    #x = AveragePooling2D(pool_size=(4, 4), padding = 'same')(x)
+    #x = Dropout(.4)(x)
+    #x = Flatten()(x)
     x = Dense(num_classes, kernel_initializer='glorot_uniform', kernel_regularizer=l2(l2_regularizer), activation='softmax')(x)
 
     model = Model(inputs=base_model.input, outputs=x)
@@ -98,7 +101,8 @@ def main():
     model.fit_generator(generator=training_generator,
                         validation_data=validation_generator,
                         use_multiprocessing=True,
-                        workers=4)
+                        workers=4,
+                        epochs=num_epochs)
 
 # if __name__ == '__main__':
 #     extractor = parallelTestModule.ParallelExtractor()
