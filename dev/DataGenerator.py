@@ -8,16 +8,6 @@ import random
 import tensorflow as tf
 import master_config
 
-#
-# aug_params = {
-#     'theta': 0,
-#     'tx': 0,
-#     'ty': 0,
-#     'shear': 0,
-#     'zx': 1,
-#     'zy': 1,
-#     'mirror': False
-# }
 
 class DataGenerator(keras.utils.Sequence):
     def __init__(self, list_IDs, labels, path_to_dataset, subdir, batch_size=32, dim=(150, 150), n_channels=3,

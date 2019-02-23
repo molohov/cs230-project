@@ -1,7 +1,6 @@
 import json
 import master_config
 
-
 with open(master_config.train_dict_loc,'r') as inf:
     dict_from_file = eval(inf.read())
 

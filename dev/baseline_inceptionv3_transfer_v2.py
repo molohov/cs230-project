@@ -25,28 +25,6 @@ import h5py
 # import parallelTestModule
 import json
 import master_config
-#
-# length = 150
-# width = 150
-# train_set_loc = "../data_full_" + str(length) + "_" + str(width) + "/train"
-# dev_set_loc = "../data_full_" + str(length) + "_" + str(width) + "/dev"
-#
-# # Parameters
-# params = {'dim': (150,150),
-#           'batch_size': 32,
-#           'n_classes': 101,
-#           'n_channels': 3,
-#           'shuffle': True}
-#
-# # model vars
-# freeze_base_model  = False
-# learning_rate      = 0.01
-# momentum           = 0.8
-# l2_regularizer     = 0.2
-#
-#
-# partition_dict_loc = "./partition.dict"
-# labels_dict_loc = "./labels.dict"
 
 with open(master_config.partition_dict_loc,'r') as inf:
     partition = eval(inf.read())
