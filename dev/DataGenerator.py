@@ -14,6 +14,7 @@ aug_params = {
     'shear': 0,
     'zx': 1,
     'zy': 1,
+    'mirror': False
 }
 
 class DataGenerator(keras.utils.Sequence):
@@ -40,6 +41,7 @@ class DataGenerator(keras.utils.Sequence):
         aug_params['shear'] = random.choice([0, 10, 20, 30])
         aug_params['zx'] = random.choice([1, 0.5, 2])
         aug_params['zy'] = aug_params['zx']
+        aug_params['mirror'] = random.choice([True, False])
 
     def __data_generation(self, list_IDs_temp):
         'Generates data containing batch_size samples' # X : (n_samples, *dim, n_channels)
@@ -55,7 +57,7 @@ class DataGenerator(keras.utils.Sequence):
             # print(ID)
             # print(np.array(Image.open(self.path_to_dataset + "/" + ID)).shape)
             img = mpimg.imread(self.path_to_dataset+"/"+ID)
-            tf.keras.preprocessing.image.apply_affine_transform(
+            img = tf.keras.preprocessing.image.apply_affine_transform(
                 img,
                 theta=aug_params['theta'],
                 shear=aug_params['shear'],
@@ -66,6 +68,8 @@ class DataGenerator(keras.utils.Sequence):
                 channel_axis=2,
                 fill_mode='nearest',
             )
+            if aug_params['mirror']:
+                img = np.fliplr(img)
             X[i,] = np.array(img) / 255
             # Store class
             # print(self.labels)
