@@ -15,6 +15,8 @@ from keras.regularizers import l2
 from keras.utils import layer_utils, plot_model
 from keras.utils.data_utils import get_file
 from keras.utils.vis_utils import model_to_dot
+from os import makedirs
+from os.path import isdir
 import pydot
 from IPython.display import SVG
 import matplotlib.pyplot as plt
@@ -72,7 +74,10 @@ def main():
     model = create_model(master_config.params['n_classes'], learning_rate = master_config.learning_rate, momentum = master_config.momentum, l2_regularizer = master_config.l2_regularizer)
 
     # Train model on dataset
-    save_weight_filepath = "./saved_models/weights - {epoch: 02d} - {val_acc: .2f}.hdf5"
+    if isdir(master_config.model_save_path) is False:
+        makedirs(master_config.model_save_path)
+
+    save_weight_filepath = master_config.model_save_path + "/weights - {epoch: 02d} - {val_acc: .4f}.hdf5"
     checkpoint = ModelCheckpoint(save_weight_filepath, monitor='val_acc', verbose=1, save_best_only=True, mode='max')
     callbacks_list = [checkpoint]
 

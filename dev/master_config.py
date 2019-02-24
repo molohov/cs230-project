@@ -1,7 +1,10 @@
-num_epochs = 10
+num_epochs = 30
 height = 150
 width = 150
 num_channels = 3
+
+model_save_path = 'saved_models'
+
 train_set_loc = "../data_full_" + str(height) + "_" + str(width) + "/train"
 dev_set_loc = "../data_full_" + str(height) + "_" + str(width) + "/dev"
 train_dict_loc = "../train_full_" + str(height) + "_" + str(width) + ".dict"
