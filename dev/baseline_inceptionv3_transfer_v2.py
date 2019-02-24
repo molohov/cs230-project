@@ -25,6 +25,7 @@ import h5py
 # import parallelTestModule
 import json
 import master_config
+from keras.callbacks import ModelCheckpoint
 
 with open(master_config.partition_dict_loc,'r') as inf:
     partition = eval(inf.read())
@@ -71,11 +72,16 @@ def main():
     model = create_model(master_config.params['n_classes'], learning_rate = master_config.learning_rate, momentum = master_config.momentum, l2_regularizer = master_config.l2_regularizer)
 
     # Train model on dataset
+    save_weight_filepath = "./saved_models/weights - {epoch: 02d} - {val_acc: .2f}.hdf5"
+    checkpoint = ModelCheckpoint(save_weight_filepath, monitor='val_acc', verbose=1, save_best_only=True, mode='max')
+    callbacks_list = [checkpoint]
+
     model.fit_generator(generator=training_generator,
                         validation_data=validation_generator,
                         use_multiprocessing=True,
                         workers=4,
-                        epochs=master_config.num_epochs)
+                        epochs=master_config.num_epochs,
+                        callbacks=callbacks_list)
 
 # if __name__ == '__main__':
 #     extractor = parallelTestModule.ParallelExtractor()
