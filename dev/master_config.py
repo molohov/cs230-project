@@ -1,9 +1,13 @@
-num_epochs = 30
+num_epochs = 3
 height = 150
 width = 150
 num_channels = 3
 
 model_save_path = 'saved_models'
+restore_weights = True
+restore_weights_path = model_save_path + "/weights -  28 -  0.5993.hdf5"
+
+plot_history = False
 
 train_set_loc = "../data_full_" + str(height) + "_" + str(width) + "/train"
 dev_set_loc = "../data_full_" + str(height) + "_" + str(width) + "/dev"

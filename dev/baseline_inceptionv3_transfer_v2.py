@@ -47,14 +47,14 @@ def create_model(num_classes=master_config.params['n_classes'], learning_rate = 
         for layer in base_model.layers:
             layer.trainable = False
 
-    # Custom layers after base model's output
     x = base_model.output
-    #x = AveragePooling2D(pool_size=(4, 4), padding = 'same')(x)
-    #x = Dropout(.4)(x)
-    #x = Flatten()(x)
     x = Dense(num_classes, kernel_initializer='glorot_uniform', kernel_regularizer=l2(l2_regularizer), activation='softmax')(x)
 
     model = Model(inputs=base_model.input, outputs=x)
+
+    if master_config.restore_weights:
+        save_weight_filepath = master_config.restore_weights_path
+        model.load_weights(save_weight_filepath)
 
     opt = SGD(lr=learning_rate, momentum=momentum)
     model.compile(optimizer=opt, loss='categorical_crossentropy', metrics=['accuracy'])
@@ -81,12 +81,22 @@ def main():
     checkpoint = ModelCheckpoint(save_weight_filepath, monitor='val_acc', verbose=1, save_best_only=True, mode='max')
     callbacks_list = [checkpoint]
 
-    model.fit_generator(generator=training_generator,
+    history = model.fit_generator(generator=training_generator,
                         validation_data=validation_generator,
                         use_multiprocessing=True,
                         workers=4,
                         epochs=master_config.num_epochs,
                         callbacks=callbacks_list)
+
+    if master_config.plot_history:
+        print(history.history.keys())
+        plt.plot(history.history['acc'])
+        plt.plot(history.history['val_acc'])
+        plt.title('model accuracy')
+        plt.ylabel('accuracy')
+        plt.xlabel('epoch')
+        plt.legend(['train', 'test'], loc='upper left')
+        plt.show()
 
 # if __name__ == '__main__':
 #     extractor = parallelTestModule.ParallelExtractor()
