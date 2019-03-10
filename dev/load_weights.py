@@ -30,6 +30,13 @@ import master_config
 from keras.callbacks import ModelCheckpoint
 from DataGenerator import DataGenerator
 
+
+with open(master_config.partition_dict_loc,'r') as inf:
+    partition = eval(inf.read())
+
+with open(master_config.labels_dict_loc,'r') as inf:
+    labels = eval(inf.read())
+
 # create_model
 #
 # Create the neural network model
@@ -56,16 +63,38 @@ def create_model(num_classes=master_config.params['n_classes'], l2_regularizer =
 
 # Generators
 def main():
+    printWeights = False
+    save_weight_filepath = master_config.restore_weights_path
+    validation_generator = DataGenerator(partition['validation'], labels, master_config.dev_set_loc, 'dev', **master_config.params)
+
     # Design model
     model = create_model(master_config.params['n_classes'])
-
-    save_weight_filepath = master_config.model_save_path + "/weights -  28 -  0.5993.hdf5"
-
     model.load_weights(save_weight_filepath)
-
-    for layer in model.layers:
-        weights = layer.get_weights() # list of numpy arrays
-        print (weights)
+ 
+    if printWeights:
+        for layer in model.layers:
+            weights = layer.get_weights() # list of numpy arrays
+            print (weights)
+ 
+    prediction = model.predict_generator(
+        generator=validation_generator,
+        use_multiprocessing=True,
+        workers=4,
+    )
+ 
+    rng = np.arange(1, 102)
+    mean = np.mean(prediction, axis=0)
+ 
+    print ("prediction shape = ", prediction.shape)
+    print ("rng shape = ", rng.shape)
+    print ("mean shape = ", mean.shape)
+ 
+    plt.barh(rng, mean[:,])
+    plt.title('categorical accuracy')
+    plt.ylabel('category')
+    plt.xlabel('mean confidence')
+    #plt.legend(['validation'], loc='upper left')
+    plt.show()
 
 if __name__ == "__main__":
     main()
