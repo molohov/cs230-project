@@ -11,7 +11,7 @@ import master_config
 
 class DataGenerator(keras.utils.Sequence):
     def __init__(self, list_IDs, labels, path_to_dataset, subdir, batch_size=32, dim=(150, 150), n_channels=3,
-             n_classes=10, shuffle=True):
+             n_classes=10, shuffle=False):
         'Initialization'
         self.dim = dim
         self.batch_size = batch_size

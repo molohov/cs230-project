@@ -97,7 +97,7 @@ def main(returnModel=False):
     plt.ylabel('category')
     plt.xlabel('mean confidence')
     #plt.legend(['validation'], loc='upper left')
-    plt.show()
+    # plt.show()
 
 if __name__ == "__main__":
     main()

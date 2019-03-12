@@ -67,7 +67,7 @@ def create_model(num_classes=master_config.params['n_classes'], learning_rate = 
 
 # Generators
 def main():
-    training_generator = DataGenerator(partition['train'], labels, master_config.train_set_loc, 'train', **master_config.params)
+    training_generator = DataGenerator(partition['train'], labels, master_config.train_set_loc, 'train', **master_config.params, shuffle=True)
     validation_generator = DataGenerator(partition['validation'], labels, master_config.dev_set_loc, 'dev', **master_config.params)
 
     # Design model

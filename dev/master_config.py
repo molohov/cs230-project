@@ -18,8 +18,8 @@ dev_dict_loc = "../dev_full_" + str(height) + "_" + str(width) + ".dict"
 params = {'dim': (height, width),
           'batch_size': 32,
           'n_classes': 101,
-          'n_channels': num_channels,
-          'shuffle': True}
+          'n_channels': num_channels}
+#           'shuffle': True}
 
 # model vars
 freeze_base_model  = False
