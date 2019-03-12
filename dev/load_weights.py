@@ -62,7 +62,7 @@ def create_model(num_classes=master_config.params['n_classes'], l2_regularizer =
 # labels = # Labels
 
 # Generators
-def main():
+def main(returnModel=False):
     printWeights = False
     save_weight_filepath = master_config.restore_weights_path
     validation_generator = DataGenerator(partition['validation'], labels, master_config.dev_set_loc, 'dev', **master_config.params)
@@ -70,6 +70,9 @@ def main():
     # Design model
     model = create_model(master_config.params['n_classes'])
     model.load_weights(save_weight_filepath)
+
+    if returnModel:
+        return model    
  
     if printWeights:
         for layer in model.layers:
