@@ -66,6 +66,9 @@ def main(returnModel=False):
     printWeights = False
     save_weight_filepath = master_config.restore_weights_path
     validation_generator = DataGenerator(partition['validation'], labels, master_config.dev_set_loc, 'dev', **master_config.params)
+    # print(validation_generator.list_IDs)
+    print(len(validation_generator.list_IDs))
+
 
     # Design model
     model = create_model(master_config.params['n_classes'])
@@ -86,8 +89,28 @@ def main(returnModel=False):
     )
  
     rng = np.arange(1, 102)
+
+    prediction_index = np.argmax(prediction, axis=1)
+
     mean = np.mean(prediction, axis=0)
- 
+    list_of_images = validation_generator.list_IDs
+    list_of_predicted_images = list_of_images[0:prediction.shape[0]]
+    # print(list_of_predicted_images)
+
+    with open("./labels.dict", 'r') as inf:
+        dict_from_file = eval(inf.read())
+
+
+    i = 0
+    right = 0
+    for img in list_of_predicted_images:
+        if dict_from_file[img] == prediction_index[i]:
+            right = right + 1
+        i = i+1
+
+    accuracy = right/i
+    print("Cacluated Accuracy =", accuracy)
+
     print ("prediction shape = ", prediction.shape)
     print ("rng shape = ", rng.shape)
     print ("mean shape = ", mean.shape)
