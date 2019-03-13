@@ -49,19 +49,20 @@ class DataGenerator(keras.utils.Sequence):
             # print(ID)
             # print(np.array(Image.open(self.path_to_dataset + "/" + ID)).shape)
             img = mpimg.imread(self.path_to_dataset+"/"+ID)
-            img = tf.keras.preprocessing.image.apply_affine_transform(
-                img,
-                theta=master_config.aug_params['theta'],
-                shear=master_config.aug_params['shear'],
-                zx=master_config.aug_params['zx'],
-                zy=master_config.aug_params['zy'],
-                row_axis=0,
-                col_axis=1,
-                channel_axis=2,
-                fill_mode='nearest',
-            )
-            if master_config.aug_params['mirror']:
-                img = np.fliplr(img)
+            if self.shuffle:
+                img = tf.keras.preprocessing.image.apply_affine_transform(
+                    img,
+                    theta=master_config.aug_params['theta'],
+                    shear=master_config.aug_params['shear'],
+                    zx=master_config.aug_params['zx'],
+                    zy=master_config.aug_params['zy'],
+                    row_axis=0,
+                    col_axis=1,
+                    channel_axis=2,
+                    fill_mode='nearest',
+                )
+                if master_config.aug_params['mirror']:
+                    img = np.fliplr(img)
             X[i,] = np.array(img) / 255
             # Store class
             # print(self.labels)
