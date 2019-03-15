@@ -44,8 +44,9 @@ def create_model(num_classes=master_config.params['n_classes'], learning_rate = 
     base_model = InceptionV3(weights='imagenet', include_top=False, input_tensor=Input(shape=(master_config.height, master_config.width, master_config.num_channels)), pooling='max')
 
     if master_config.freeze_base_model:
-        for layer in base_model.layers:
-            layer.trainable = False
+        model_layers = base_model.layers
+        for layer in range(master_config.num_layers_frozen):
+            model_layers[layer].trainable = False
 
     x = base_model.output
     x = Dense(num_classes, kernel_initializer='glorot_uniform', kernel_regularizer=l2(l2_regularizer), activation='softmax')(x)
