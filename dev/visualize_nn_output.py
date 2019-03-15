@@ -32,11 +32,14 @@ if __name__ == '__main__':
     single_filter = False
     #single_filter = True
 
-
     # The name of the layer we want to visualize
-    layer_name = 'conv2d_94'
+    layer_name = 'dense_1'
     #layer_name = 'conv2d_1'
     layer_idx = utils.find_layer_idx(model, layer_name)
+
+    #swap activations of last layer with linear
+    model.layers[layer_idx].activation = activations.linear
+    model = utils.apply_modifications(model)
 
     # Visualize all filters in this layer.
     filters = None
@@ -50,10 +53,10 @@ if __name__ == '__main__':
     print ("Processing ", len(filters), " filters")
     for idx in filters:
         print ("Processing filter", idx, "/", len(filters))
-        img = visualize_activation(model, layer_idx, filter_indices=idx, tv_weight=0., max_iter=100, input_modifiers=[Jitter(0.05)])
+        img = visualize_activation(model, layer_idx, filter_indices=idx, tv_weight=0., lp_norm_weight=0., max_iter=200, input_modifiers=[Jitter(16)])
         
         # Utility to overlay text on image.
-        img = utils.draw_text(img, 'Filter {}'.format(idx))    
+        img = utils.draw_text(img, 'Output class {}'.format(idx))    
         vis_images.append(img)
 
     # Generate stitched image palette with 8 cols.
