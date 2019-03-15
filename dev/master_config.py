@@ -4,7 +4,7 @@ width = 150
 num_channels = 3
 
 model_save_path = 'saved_models'
-restore_weights = True
+restore_weights = False
 restore_weights_path = model_save_path + "/weights -  19 -  0.6190.hdf5"
 
 plot_history = False
