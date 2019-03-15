@@ -22,7 +22,8 @@ params = {'dim': (height, width),
 #           'shuffle': True}
 
 # model vars
-freeze_base_model  = False
+freeze_base_model  = True
+num_layers_frozen  = 250
 learning_rate      = 0.01
 momentum           = 0.8
 l2_regularizer     = 0.2
