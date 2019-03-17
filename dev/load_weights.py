@@ -100,13 +100,47 @@ def main(returnModel=False):
     with open("./labels.dict", 'r') as inf:
         dict_from_file = eval(inf.read())
 
+    with open("./class_id_indexes_2.dict", 'r') as inf:
+        class_id_dict = eval(inf.read())
+
 
     i = 0
     right = 0
+    accuracy_by_class_index = {}
     for img in list_of_predicted_images:
+        if dict_from_file[img] in accuracy_by_class_index:
+            # print ("Pri " + str(dict_from_file[img]))
+            accuracy_by_class_index[dict_from_file[img]]['total'] = accuracy_by_class_index[dict_from_file[img]]['total'] + 1
+        else:
+            # print ("Pri2 " + str(dict_from_file[img]))
+            accuracy_by_class_index[dict_from_file[img]] = {'total': 1, 'right': 0}
+            # accuracy_by_class_index[dict_from_file[img]] = {}
+            # for i in accuracy_by_class_index:
+            #     print (i, accuracy_by_class_index[i])
         if dict_from_file[img] == prediction_index[i]:
             right = right + 1
+            accuracy_by_class_index[dict_from_file[img]]['right'] = accuracy_by_class_index[dict_from_file[img]]['right'] + 1
         i = i+1
+
+    classes = []
+    accuracy_by_class = []
+    for class_id in accuracy_by_class_index:
+        accuracy = accuracy_by_class_index[class_id]['right'] / accuracy_by_class_index[class_id]['total']
+        classes.append(class_id_dict[str(class_id)])
+        accuracy_by_class.append(accuracy)
+
+    # print(classes)
+    # print(accuracy_by_class)
+    y_pos = np.arange(len(classes))
+    # plt.bar(y_pos[:5], accuracy_by_class[:5], align='center', alpha=0.5)
+    plt.bar(y_pos, accuracy_by_class, align='center', alpha=0.5)
+    # plt.xticks(y_pos[:5], classes[:5])
+    plt.xticks(y_pos, classes)
+    plt.xticks(rotation=90)
+    plt.ylabel('Accuracy')
+    plt.title('Class Name')
+
+    plt.show()
 
     accuracy = right/i
     print("Cacluated Accuracy =", accuracy)
