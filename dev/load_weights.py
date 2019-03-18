@@ -135,7 +135,26 @@ def main(returnModel=False):
 
     # print(classes)
     # print(accuracy_by_class)
-    y_pos = np.arange(len(classes))
+    # y_pos = np.arange(len(classes))
+    # # plt.bar(y_pos[:5], accuracy_by_class[:5], align='center', alpha=0.5)
+    # plt.bar(y_pos, accuracy_by_class, align='center', alpha=0.5)
+    # # plt.xticks(y_pos[:5], classes[:5])
+    # plt.xticks(y_pos, classes)
+    # plt.xticks(rotation=90)
+    # plt.ylabel('Accuracy')
+    # plt.title('Class Name')
+
+    # plt.show()
+    sorted_classes = [x for _, x in sorted(zip(accuracy_by_class, classes))]
+    accuracy_by_class.sort()
+    interested_classes = []
+    interested_classes.extend(sorted_classes[:10])
+    interested_classes.extend(sorted_classes[-10:])
+    accuracy_by_class_new = []
+    accuracy_by_class_new.extend(accuracy_by_class[:10])
+    accuracy_by_class_new.extend(accuracy_by_class[-10:])
+
+    y_pos = np.arange(len(accuracy_by_class_new))
     # plt.bar(y_pos[:5], accuracy_by_class[:5], align='center', alpha=0.5)
     barlist = plt.bar(y_pos, accuracy_by_class, align='center', alpha=0.5)
     for barNum in range(len(barlist)):
@@ -148,14 +167,13 @@ def main(returnModel=False):
         elif barNum % 5 == 4:
             barlist[barNum].set_color('k')
     # plt.xticks(y_pos[:5], classes[:5])
-    plt.xticks(y_pos, classes)
+    plt.xticks(y_pos, interested_classes)
     plt.xticks(rotation=90)
     plt.ylabel('Accuracy')
-    #plt.xlabel('Class Name')
-    #plt.title('Overall Accuracy = ' + str(accuracy))
 
     plt.show()
-
+    plt.savefig("top_and_bottom_10.png")
+    
     print("Cacluated Accuracy =", accuracy)
 
     print ("prediction shape = ", prediction.shape)
