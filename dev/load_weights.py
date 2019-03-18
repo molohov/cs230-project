@@ -145,8 +145,8 @@ def main(returnModel=False):
     # plt.title('Class Name')
 
     # plt.show()
-    sorted_classes = [x for _, x in sorted(zip(accuracy_by_class, classes))]
-    accuracy_by_class.sort()
+    sorted_classes = [x for _, x in sorted(zip(accuracy_by_class, classes), reverse=True)]
+    accuracy_by_class = sorted(accuracy_by_class, reverse=True)
     interested_classes = []
     interested_classes.extend(sorted_classes[:10])
     interested_classes.extend(sorted_classes[-10:])
@@ -156,7 +156,7 @@ def main(returnModel=False):
 
     y_pos = np.arange(len(accuracy_by_class_new))
     # plt.bar(y_pos[:5], accuracy_by_class[:5], align='center', alpha=0.5)
-    barlist = plt.bar(y_pos, accuracy_by_class, align='center', alpha=0.5)
+    barlist = plt.bar(y_pos, accuracy_by_class_new, align='center', alpha=0.5)
     for barNum in range(len(barlist)):
         if barNum % 5 == 1:
             barlist[barNum].set_color('r')
@@ -171,7 +171,7 @@ def main(returnModel=False):
     plt.xticks(rotation=90)
     plt.ylabel('Accuracy')
 
-    plt.show()
+    # plt.show()
     plt.savefig("top_and_bottom_10.png")
     
     print("Cacluated Accuracy =", accuracy)
