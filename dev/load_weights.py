@@ -66,6 +66,7 @@ def main(returnModel=False):
     printWeights = False
     save_weight_filepath = master_config.restore_weights_path
     validation_generator = DataGenerator(partition['validation'], labels, master_config.dev_set_loc, 'dev', **master_config.params)
+    #validation_generator = DataGenerator(partition['train'], labels, master_config.train_set_loc, 'train', **master_config.params)
     # print(validation_generator.list_IDs)
     print(len(validation_generator.list_IDs))
 
@@ -92,7 +93,7 @@ def main(returnModel=False):
 
     prediction_index = np.argmax(prediction, axis=1)
 
-    mean = np.mean(prediction, axis=0)
+    # mean = np.mean(prediction, axis=0)
     list_of_images = validation_generator.list_IDs
     list_of_predicted_images = list_of_images[0:prediction.shape[0]]
     # print(list_of_predicted_images)
@@ -104,10 +105,10 @@ def main(returnModel=False):
         class_id_dict = eval(inf.read())
 
 
-    i = 0
     right = 0
     accuracy_by_class_index = {}
-    for img in list_of_predicted_images:
+    for i in range(len(list_of_predicted_images)):
+        img = list_of_predicted_images[i]
         if dict_from_file[img] in accuracy_by_class_index:
             # print ("Pri " + str(dict_from_file[img]))
             accuracy_by_class_index[dict_from_file[img]]['total'] = accuracy_by_class_index[dict_from_file[img]]['total'] + 1
@@ -120,7 +121,6 @@ def main(returnModel=False):
         if dict_from_file[img] == prediction_index[i]:
             right = right + 1
             accuracy_by_class_index[dict_from_file[img]]['right'] = accuracy_by_class_index[dict_from_file[img]]['right'] + 1
-        i = i+1
 
     classes = []
     accuracy_by_class = []
@@ -129,31 +129,44 @@ def main(returnModel=False):
         classes.append(class_id_dict[str(class_id)])
         accuracy_by_class.append(accuracy)
 
+    accuracy = right/len(list_of_predicted_images)
+
+    print ("num right: " + str(right) + ", total: " + str(i))
+
     # print(classes)
     # print(accuracy_by_class)
     y_pos = np.arange(len(classes))
     # plt.bar(y_pos[:5], accuracy_by_class[:5], align='center', alpha=0.5)
-    plt.bar(y_pos, accuracy_by_class, align='center', alpha=0.5)
+    barlist = plt.bar(y_pos, accuracy_by_class, align='center', alpha=0.5)
+    for barNum in range(len(barlist)):
+        if barNum % 5 == 1:
+            barlist[barNum].set_color('r')
+        elif barNum % 5 == 2:
+            barlist[barNum].set_color('g')
+        elif barNum % 5 == 3:
+            barlist[barNum].set_color('y')
+        elif barNum % 5 == 4:
+            barlist[barNum].set_color('k')
     # plt.xticks(y_pos[:5], classes[:5])
     plt.xticks(y_pos, classes)
     plt.xticks(rotation=90)
     plt.ylabel('Accuracy')
-    plt.title('Class Name')
+    #plt.xlabel('Class Name')
+    #plt.title('Overall Accuracy = ' + str(accuracy))
 
     plt.show()
 
-    accuracy = right/i
     print("Cacluated Accuracy =", accuracy)
 
     print ("prediction shape = ", prediction.shape)
     print ("rng shape = ", rng.shape)
-    print ("mean shape = ", mean.shape)
+    #print ("mean shape = ", mean.shape)
  
-    plt.barh(rng, mean[:,])
-    plt.title('categorical accuracy')
-    plt.ylabel('category')
-    plt.xlabel('mean confidence')
-    #plt.legend(['validation'], loc='upper left')
+    # plt.barh(rng, mean[:,])
+    # plt.title('categorical accuracy')
+    # plt.ylabel('category')
+    # plt.xlabel('mean confidence')
+    # plt.legend(['validation'], loc='upper left')
     # plt.show()
 
 if __name__ == "__main__":
