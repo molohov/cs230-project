@@ -7,6 +7,7 @@ with open(master_config.train_dict_loc,'r') as inf:
 partition = {}
 labels = {}
 class_id_indexes = {}
+class_id_indexes_2 = {}
 class_id_counter = 0
 for class_id in dict_from_file:
     image_ids = dict_from_file[class_id]
@@ -22,6 +23,7 @@ for class_id in dict_from_file:
             labels[image] = class_id_indexes[class_id]
         else:
             class_id_indexes[class_id] = class_id_counter
+            class_id_indexes_2[class_id_counter] = class_id
             labels[image] = class_id_counter
             class_id_counter = class_id_counter + 1
 
@@ -48,3 +50,7 @@ with open('labels.dict', 'w') as file:
 
 with open('class_id_indexes.dict', 'w') as file:
     file.write(json.dumps(class_id_indexes))  # use `json.loads` to do the reverse
+
+with open('class_id_indexes_2.dict', 'w') as file:
+    file.write(json.dumps(class_id_indexes_2))  # use `json.loads` to do the reverse
+
