@@ -36,7 +36,7 @@ for theta in aug_params['theta']:
                     channel_axis=2,
                     fill_mode='nearest',
                 )
-                if master_config.aug_params['mirror']:
+                if aug_params['mirror']:
                     img = np.fliplr(img)
                 imgplot = plt.imshow(img)
                 plt.savefig("./augmented/" + str('theta_') + str(theta) + str('shear_') + str(shear) + str('z_') +str(z) +str('mirror_') + str(mirror) +str(".jpg"))
