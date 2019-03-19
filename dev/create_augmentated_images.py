@@ -21,6 +21,7 @@ aug_params['mirror'] = [True, False]
 img = mpimg.imread(sys.argv[1])
 original_image = img
 
+
 for theta in aug_params['theta']:
     for shear in aug_params['shear']:
         for z in aug_params['zx']:
@@ -36,9 +37,10 @@ for theta in aug_params['theta']:
                     channel_axis=2,
                     fill_mode='nearest',
                 )
-                if aug_params['mirror']:
+                if mirror:
                     img = np.fliplr(img)
                 imgplot = plt.imshow(img)
                 plt.savefig("./augmented/" + str('theta_') + str(theta) + str('shear_') + str(shear) + str('z_') +str(z) +str('mirror_') + str(mirror) +str(".jpg"))
                 img = original_image
+print(count)
 
