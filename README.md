@@ -1,18 +1,3 @@
-# Food identification with NVIDIAns
+# Complex Food Classification - CS230 Final Project
 
-```
-README.md
-## default CS230 tutorials
-pytorch/
-    vision/
-        README.md
-    nlp/
-        README.md
-tensorflow/
-    vision/
-        README.md
-    nlp/
-        README.md
-
-#bryce's faster R-CNN development
-```
+Authors: Bryce Long, I-Sheng Yang, Priyal Mehta
