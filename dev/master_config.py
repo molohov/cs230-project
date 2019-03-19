@@ -1,11 +1,11 @@
-num_epochs = 30
+num_epochs = 3
 height = 150
 width = 150
 num_channels = 3
 
 model_save_path = 'saved_models'
 restore_weights = True
-restore_weights_path = model_save_path + "/weights -  18 -  0.6276.hdf5"
+restore_weights_path = model_save_path + "/weights -  2 -  0.6531.hdf5"
 
 plot_history = False
 
@@ -22,10 +22,10 @@ params = {'dim': (height, width),
 #           'shuffle': True}
 
 # model vars
-freeze_base_model  = True
+freeze_base_model  = False
 num_layers_frozen  = 250
 learning_rate      = 0.01
-momentum           = 0.8
+momentum           = 0.6
 l2_regularizer     = 0.2
 
 
